@@ -1,0 +1,5 @@
+alpine_image: forgottenbeast/alpine:multiarch
+volumes_to_backup:
+  - vol1
+  - vol2
+  - vol3

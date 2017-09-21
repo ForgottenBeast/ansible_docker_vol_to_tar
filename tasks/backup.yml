@@ -1,0 +1,5 @@
+- name: "Copy volume content"
+  command: docker run --rm -i -v {{ item }}:/volume:ro -v /tmp/backup/{{ item }}:/backup {{ alpine_image }} cp -a /volume/. /backup
+
+- name: "Compress back ups"
+  command: tar -cjf /tmp/backup/{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{item}}.tar.bz2 -C /tmp/backup/{{item}} ./
