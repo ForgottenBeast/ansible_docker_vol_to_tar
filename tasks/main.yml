@@ -6,19 +6,12 @@
 
 - name: "Backing up volumes"
   tags: vol_backup
+  become: True
   include: backup.yml
   with_items: "{{ volumes_to_backup }}"
 
-- name: "Retrieve back ups"
-  tags: vol_backup
-  fetch:
-    flat: True
-    src: "{{ item }}"
-  with_fileglob:
-    - /tmp/backup/*.tar.bz2
-
 - name: "Restore from backups"
-  tags: "vol_restore"
+  tags: vol_restore
   include: restore.yml
   with_items: "{{ volumes_to_backup }}"
   loop_control:

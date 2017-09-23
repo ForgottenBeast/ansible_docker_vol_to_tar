@@ -3,7 +3,7 @@
   src: "{{ item }}"
   dest: /tmp/backup/{{vol}}.tar.bz2
   with_fileglob:
-    - *_{{vol}}.tar.bz2
+    - "*_{{vol}}.tar.bz2"
 
 - name: "Recreate volumes"
   include: volumes.yml
