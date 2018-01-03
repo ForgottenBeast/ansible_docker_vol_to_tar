@@ -1,6 +1,6 @@
 - name: "Decide filename"
   set_fact:
-    filename: "{{inventory_hostname}}_{{ansile_date_time.date}}_{{item}}.tar.bz2"
+    filename: "{{inventory_hostname}}_{{ansible_date_time.date}}_{{item}}.tar.bz2"
 
 - name: "Copy volume content"
   command: docker run --rm -i -v {{ item }}:/volume:ro -v /tmp/backup/{{ item }}:/backup {{ alpine_image }} cp -a /volume/. /backup
