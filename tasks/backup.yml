@@ -6,7 +6,11 @@
   command: docker run --rm -i -v {{ item }}:/volume:ro -v /tmp/backup/{{ item }}:/backup {{ alpine_image }} cp -a /volume/. /backup
 
 - name: "Compress back ups"
-  command: tar -cjf /tmp/backup/{{ filename }} -C /tmp/backup/{{item}} ./
+  archive:
+    remove: True
+    format: bz2
+    path: /tmp/backup/{{item}}
+    dest: /tmp/backup/{{filename}}
 
 - name: "Retrieve back up"
   tags: vol_backup

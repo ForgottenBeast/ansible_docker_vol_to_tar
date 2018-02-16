@@ -7,15 +7,13 @@
 - name: "Backing up volumes"
   tags: vol_backup
   become: True
-  include: backup.yml
+  include_tasks: backup.yml
   with_items: "{{ volumes_to_backup }}"
 
 - name: "Restore from backups"
+  become: True
   tags: vol_restore
-  include: restore.yml
-  with_items: "{{ volumes_to_backup }}"
-  loop_control:
-    loop_var: vol
+  import_tasks: restore.yml
 
 - name: "Clean up back up files"
   tags: always
