@@ -17,5 +17,4 @@
   fetch:
     flat: True
     src: "/tmp/backup/{{ filename }}"
-    dest: "{{playbook_dir}}/{{filename}}"
-
+    dest: "{{backup_dest_folder}}/{{filename}}"
