@@ -5,6 +5,10 @@
 - name: "Copy volume content"
   command: docker run --rm -i -v {{ item }}:/volume:ro -v /tmp/backup/{{ item }}:/backup {{ alpine_image }} cp -a /volume/. /backup
 
+- name: "Wait for a bit to prevent file not found errors"
+  wait_for: timeout=10
+  delegate_to: localhost
+
 - name: "Compress back ups"
   archive:
     remove: True
