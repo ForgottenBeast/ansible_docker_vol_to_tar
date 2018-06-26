@@ -1,22 +1,23 @@
-- name: "copy backup file to destination"
-  copy:
-    src: "{{ item }}.tar.bz2"
-    dest: /tmp/backup/{{item}}.tar.bz2
-  with_items: "{{ volumes_to_backup }}"
-
-- name: "Recreate volumes"
-  include: volumes.yml
-  become: True
-  with_items: "{{ volumes_to_backup }}"
-
-- name: "Restore from backup"
-  with_items: "{{ volumes_to_backup }}"
-  shell: |
-    docker run --rm -i -v {{ item }}:/{{item}} -v /tmp/backup:/backup:ro \
-        {{ alpine_image }} \
-        sh -c "\
-        apk update;\
-        apk add -y tar;\
-        rm -rf /{{item}}/* ;\
-        tar -C /{{item}}/ -xjf /backup/{{ item }}.tar.bz2;"
-
+- block:
+  - name: "copy backup file to destination"
+    copy:
+      src: "{{ item }}.tar.bz2"
+      dest: /tmp/backup/{{item}}.tar.bz2
+    with_items: "{{ volumes_to_backup }}"
+  
+  - name: "Recreate volumes"
+    include: volumes.yml
+    become: True
+    with_items: "{{ volumes_to_backup }}"
+  
+  - name: "Restore from backup"
+    with_items: "{{ volumes_to_backup }}"
+    shell: |
+      docker run --rm -i -v {{ item }}:/{{item}} -v /tmp/backup:/backup:ro \
+          {{ alpine_image }} \
+          sh -c "\
+          apk update;\
+          apk add -y tar;\
+          rm -rf /{{item}}/* ;\
+          tar -C /{{item}}/ -xjf /backup/{{ item }}.tar.bz2;"
+  tags: vol_restore

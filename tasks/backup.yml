@@ -1,24 +1,24 @@
-- name: "Decide filename"
-  set_fact:
-    filename: "{{inventory_hostname}}_{{ansible_date_time.date}}_{{item}}.tar.bz2"
-
-- name: "Copy volume content"
-  command: docker run --rm -i -v {{ item }}:/volume:ro -v /tmp/backup/{{ item }}:/backup {{ alpine_image }} cp -a /volume/. /backup
-
-- name: "Wait for a bit to prevent file not found errors"
-  wait_for: timeout=10
-  delegate_to: localhost
-
-- name: "Compress back ups"
-  archive:
-    remove: True
-    format: bz2
-    path: /tmp/backup/{{item}}
-    dest: /tmp/backup/{{filename}}
-
-- name: "Retrieve back up"
+- block:
+  
+  - name: "Decide filename"
+    set_fact:
+      filename: "{{inventory_hostname}}_{{ansible_date_time.date}}_{{item}}.tar.bz2"
+  
+  - name: "Copy volume content"
+    command: docker run --rm -i -v {{ item }}:/volume:ro -v /tmp/backup/{{ item }}:/backup {{ alpine_image }} cp -a /volume/. /backup
+  
+  - name: "Compress back ups"
+    archive:
+      remove: True
+      format: bz2
+      path: /tmp/backup/{{item}}
+      dest: /tmp/backup/{{filename}}
+  
+  - name: "Retrieve back up"
+    tags: vol_backup
+    fetch:
+      flat: True
+      src: "/tmp/backup/{{ filename }}"
+      dest: "{{backup_dest_folder}}/{{filename}}"
   tags: vol_backup
-  fetch:
-    flat: True
-    src: "/tmp/backup/{{ filename }}"
-    dest: "{{backup_dest_folder}}/{{filename}}"
+  become: True
